@@ -38,6 +38,8 @@ namespace registration {
         Eigen::Matrix4f ICP_R_1;
         Eigen::Matrix4f ICP_R_2;
 
+        void set_param();
+        void get_param();
         void read_pointcloud(
             const std::string& filename,
             pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud );

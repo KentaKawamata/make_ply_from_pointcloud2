@@ -1,5 +1,7 @@
 #include <string>
 #include <tuple>
+
+#include <ros/ros.h>
 #include <Eigen/Core>
 #include <pcl/io/ply_io.h>
 #include <pcl/point_cloud.h>
@@ -16,7 +18,6 @@
 
 #include <pcl/filters/passthrough.h>
 
-#include "loadVoxelSize.hpp"
 #include "./../include/registration_pc.hpp"
 
 namespace registration {
@@ -32,12 +33,28 @@ namespace registration {
 		//view_origin (new pcl::visualization::PCLVisualizer() ),
 		//view_ICP (new pcl::visualization::PCLVisualizer() )
 	{
-		registration::loadParams(&voxel_size, cloudname, modelname, saveName);
+		get_param();
 	}
 
 	registration_pc::~registration_pc()
 	{
+	}
 
+	void registration_pc::set_param()
+	{
+    	ros::param::set("/ply_from_pc2/voxel_size", "0.0128");
+		ros::param::set("/ply_from_pc2/model_cloud", "");
+		ros::param::set("/ply_from_pc2/obs_cloud", "");
+		ros::param::set("/ply_from_pc2/save_name", "");
+	}
+
+	void registration_pc::get_param()
+	{
+		set_param();
+		ros::param::get("/ply_from_pc2/voxel_size", voxel_size);
+		ros::param::get("/ply_from_pc2/model_cloud", modelname);
+		ros::param::get("/ply_from_pc2/obs_cloud", cloudname);
+		ros::param::get("/ply_from_pc2/save_name", saveName);
 	}
 
     void registration_pc::read_pointcloud(
