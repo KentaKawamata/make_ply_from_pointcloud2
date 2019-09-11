@@ -37,10 +37,12 @@ void ROStoPCL::set_params()
     ros::param::set("/ply_from_pc2/lis_header_id", "track_odom_frame");
     ros::param::set("/ply_from_pc2/lis_child_id", "track_pose_frame");
     ros::param::set("/ply_from_pc2/use_translation", "false");
+    ros::param::set("/ply_from_pc2/filename", "/root/datas/katori_0906");
 
     ros::param::get("/ply_from_pc2/lis_header_id", lis_header_id);
     ros::param::get("/ply_from_pc2/lis_child_id", lis_child_id);
     ros::param::get("/ply_from_pc2/use_translation", use_translate);
+    ros::param::get("/ply_from_pc2/filename", filename);
 }
 
 void ROStoPCL::check_params()
@@ -63,6 +65,7 @@ void ROStoPCL::get_params() {
         ros::param::get("/ply_from_pc2/lis_header_id", lis_header_id);
         ros::param::get("/ply_from_pc2/lis_child_id", lis_child_id);
         ros::param::get("/ply_from_pc2/use_translation", use_translate);
+        ros::param::get("/ply_from_pc2/filename", filename);
 
     } catch(std::exception& ex) {
         ROS_ERROR_STREAM("=== " << ex.what() << " ===");
@@ -96,9 +99,9 @@ void ROStoPCL::addPointCloud() {
 void ROStoPCL::savePointcloud() {
 
     std::string num = std::to_string(count);
-    std::string filename = "/root/ply_data/" + num + ".ply"; 
-    ROS_INFO_STREAM("SAVE FILE NAME : " + filename);
-    pcl::io::savePLYFileASCII(filename, *over_cloud_pcl);
+    std::string savename = filename + num + ".ply"; 
+    ROS_INFO_STREAM("SAVE FILE NAME : " + savename);
+    pcl::io::savePLYFileASCII(savename, *over_cloud_pcl);
 }
 
 void ROStoPCL::transformPointCloud() {

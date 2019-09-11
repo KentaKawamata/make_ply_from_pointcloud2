@@ -13,7 +13,7 @@
 
 #include "./../include/getRotationVector.hpp"
 #include "./../include/editCloud.hpp"
-#include "./../include/registration_pc.hpp"
+//#include "./../include/registration_pc.hpp"
 
 class ROStoPCL {
 
@@ -22,6 +22,7 @@ private:
     double RrosX;
     double RrosY;
     double RrosZ;
+    bool use_translate;
 
     int count;
     int over_pc_num;
@@ -30,6 +31,7 @@ private:
     uint32_t confidence;
 
     char character;
+    std::string filename;
 
     std::string lis_header_id;
     std::string lis_child_id;
@@ -80,7 +82,6 @@ public:
 
     GetRotationVector *rotevec;
     EditCloud *edit; 
-    registration::registration_pc *registrate;    
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
