@@ -1,3 +1,4 @@
+#include <ros/ros.h>
 #include <Eigen/Core>
 #include <Eigen/LU>
 #include "./getRotationVector.hpp"
@@ -15,14 +16,21 @@ GetRotationVector::GetRotationVector() :
     roll(0.0),
     yaw(0.0)
 {
+    get_param();
 }
 
-GetRotationVector::~GetRotationVector() {
-    
+GetRotationVector::~GetRotationVector()
+{
 }
 
-void GetRotationVector::setOverRotate4(){
+void GetRotationVector::get_param()
+{
+    ros::param::get("/ply_from_pc2/under_cam_x", under_cam_x);
+    ros::param::get("/ply_from_pc2/under_cam_z", under_cam_z);
+}
 
+void GetRotationVector::setOverRotate4()
+{
     R(0,0) = R3d(0,0);
     R(0,1) = R3d(0,1);
     R(0,2) = R3d(0,2);
@@ -36,13 +44,13 @@ void GetRotationVector::setOverRotate4(){
     R(2,2) = R3d(2,2);
 
     R(0,3) = tpclX; 
-    R(1,3) = tpclY; 
-    R(2,3) = tpclZ;
+    R(1,3) = tpclY - under_cam_z; 
+    R(2,3) = tpclZ + under_cam_x;
     R(3,3) = 1.0;
 }
 
-void GetRotationVector::setUnderRotate4(){
-
+void GetRotationVector::setUnderRotate4()
+{
     under_R(0,0) = under_R3d(0,0);
     under_R(0,1) = under_R3d(0,1);
     under_R(0,2) = under_R3d(0,2);
@@ -61,8 +69,8 @@ void GetRotationVector::setUnderRotate4(){
     under_R(3,3) = 1.0;
 }
 
-void GetRotationVector::eulerToRote(){
-
+void GetRotationVector::eulerToRote()
+{
     Eigen::Matrix3d Rpi;
     Eigen::Matrix3d Rya;
     Eigen::Matrix3d Rro;
@@ -88,8 +96,8 @@ void GetRotationVector::eulerToRote(){
     under_R3d = Rya * Rro * under_Rpi;
 }
 
-void GetRotationVector::transformPointCloud() {
-
+void GetRotationVector::transformPointCloud()
+{
     eulerToRote();
     setOverRotate4();
     setUnderRotate4();

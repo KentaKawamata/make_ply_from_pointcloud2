@@ -10,7 +10,10 @@ private:
 
     Eigen::Matrix3d R3d;
     Eigen::Matrix3d under_R3d;
+    double under_cam_x;
+    double under_cam_z;
 
+    void get_param();
     void eulerToRote();
     void setOverRotate4();
     void setUnderRotate4();
