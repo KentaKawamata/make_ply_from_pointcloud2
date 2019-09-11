@@ -32,6 +32,7 @@ private:
 
     void set_param();
     void get_param();
+    void voxel_grid();
     void smooth();
     void rangeFilter_over();
     void rangeFilter_under();

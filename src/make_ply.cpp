@@ -32,21 +32,25 @@ ROStoPCL::~ROStoPCL() {
     delete edit;
 }
 
-void ROStoPCL::set_params() {
-
+void ROStoPCL::set_params()
+{
     ros::param::set("/ply_from_pc2/lis_header_id", "track_odom_frame");
     ros::param::set("/ply_from_pc2/lis_child_id", "track_pose_frame");
+    ros::param::set("/ply_from_pc2/use_translation", "false");
 
     ros::param::get("/ply_from_pc2/lis_header_id", lis_header_id);
     ros::param::get("/ply_from_pc2/lis_child_id", lis_child_id);
+    ros::param::get("/ply_from_pc2/use_translation", use_translate);
 }
 
-void ROStoPCL::check_params() {
-    
-    if(!ros::param::has("/ply_from_pc2/lis_header_id")){
+void ROStoPCL::check_params()
+{
+    if(!ros::param::has("/ply_from_pc2/lis_header_id"))
+    {
         throw std::runtime_error("COULD NOT FIND PARAMS OF FRAME");
-    
-    } else if(!ros::param::has("/ply_from_pc2/lis_child_id")){
+    }
+    else if(!ros::param::has("/ply_from_pc2/lis_child_id"))
+    {
         throw std::runtime_error("COULD NOT FIND PARAMS OF FRAME");
     }    
 }
@@ -58,6 +62,7 @@ void ROStoPCL::get_params() {
         check_params();
         ros::param::get("/ply_from_pc2/lis_header_id", lis_header_id);
         ros::param::get("/ply_from_pc2/lis_child_id", lis_child_id);
+        ros::param::get("/ply_from_pc2/use_translation", use_translate);
 
     } catch(std::exception& ex) {
         ROS_ERROR_STREAM("=== " << ex.what() << " ===");
@@ -157,9 +162,18 @@ void ROStoPCL::quaternion_to_euler(geometry_msgs::TransformStamped &ts) {
      *              ||    ||
      ***********************************************************************/
     //////////////////////////////////
-    rotevec->tpclZ =  translation.getX();
-    rotevec->tpclY = -translation.getZ();
-    rotevec->tpclX = -translation.getY();
+    if(use_translate)
+    {
+        rotevec->tpclZ =  translation.getX();
+        rotevec->tpclY = -translation.getZ();
+        rotevec->tpclX = -translation.getY();
+    }
+    else
+    {
+        rotevec->tpclX = 0.0;
+        rotevec->tpclY = 0.0;
+        rotevec->tpclZ = 0.0;
+    }
     //////////////////////////////////
 
     rotation.setValue(ts.transform.rotation.x,
