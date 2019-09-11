@@ -1,7 +1,9 @@
+#include <ros/ros.h>
+
 #include <pcl/filters/passthrough.h>
-//#include <pcl/common/transforms.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/surface/mls.h>
+
 #include <cmath>
 #include <iostream>
 
@@ -12,14 +14,30 @@ EditCloud::EditCloud() :
     over_cloud (new pcl::PointCloud<pcl::PointXYZ>()),
     under_cloud (new pcl::PointCloud<pcl::PointXYZ>())
 {
+    get_param();
 }
 
 EditCloud::~EditCloud(){
 
 }
 
-void EditCloud::smooth() {
-   
+void EditCloud::get_param()
+{
+    ros::param::get("/ply_from_pc2/voxel_size", voxel_size);
+
+    ros::param::get("/ply_from_pc2/range_under_z_min", under_z_min);
+    ros::param::get("/ply_from_pc2/range_under_z_max", under_z_max);
+
+    ros::param::get("/ply_from_pc2/range_x_min", x_min);
+    ros::param::get("/ply_from_pc2/range_x_max", x_max);
+    ros::param::get("/ply_from_pc2/range_y_min", y_min);
+    ros::param::get("/ply_from_pc2/range_y_max", y_max);
+    ros::param::get("/ply_from_pc2/range_z_min", z_min);
+    ros::param::get("/ply_from_pc2/range_z_max", z_max);
+}
+
+void EditCloud::smooth()
+{
     pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);//Kdtreeの作成
 
     pcl::PointCloud<pcl::PointNormal> mls_points;//出力する点群の格納場所を作成
@@ -39,56 +57,56 @@ void EditCloud::smooth() {
     pcl::copyPointCloud(mls_points, *cloud);
 }
 
-void EditCloud::rangeFilter_under() {
-
+void EditCloud::rangeFilter_under()
+{
     pcl::PassThrough<pcl::PointXYZ> passX;
     passX.setInputCloud(cloud);
     passX.setFilterFieldName("x");
-    passX.setFilterLimits(-2.0, 2.0);
+    passX.setFilterLimits(x_min, x_max);
     passX.setFilterLimitsNegative(false);
     passX.filter(*cloud);
 
     pcl::PassThrough<pcl::PointXYZ> passY;
     passY.setInputCloud(cloud);
     passY.setFilterFieldName("y");
-    passY.setFilterLimits(-2.0, 3.0);
+    passY.setFilterLimits(y_min, y_max);
     passY.setFilterLimitsNegative(false);
     passY.filter(*cloud);
 
     pcl::PassThrough<pcl::PointXYZ> passZ;
     passZ.setInputCloud(cloud);
     passZ.setFilterFieldName("z");
-    passZ.setFilterLimits(0.5, 3.0);
+    passZ.setFilterLimits(under_z_min, under_z_max);
     passZ.setFilterLimitsNegative(false);
     passZ.filter(*cloud);
 }
 
-void EditCloud::rangeFilter_over() {
-
+void EditCloud::rangeFilter_over()
+{
     pcl::PassThrough<pcl::PointXYZ> passX;
     passX.setInputCloud(cloud);
     passX.setFilterFieldName("x");
-    passX.setFilterLimits(-2.0, 2.0);
+    passX.setFilterLimits(x_min, x_max);
     passX.setFilterLimitsNegative(false);
     passX.filter(*cloud);
 
     pcl::PassThrough<pcl::PointXYZ> passY;
     passY.setInputCloud(cloud);
     passY.setFilterFieldName("y");
-    passY.setFilterLimits(-3.0, 3.0);
+    passY.setFilterLimits(y_min, y_max);
     passY.setFilterLimitsNegative(false);
     passY.filter(*cloud);
 
     pcl::PassThrough<pcl::PointXYZ> passZ;
     passZ.setInputCloud(cloud);
     passZ.setFilterFieldName("z");
-    passZ.setFilterLimits(3.0, 4.5);
+    passZ.setFilterLimits(z_min, z_max);
     passZ.setFilterLimitsNegative(false);
     passZ.filter(*cloud);
 }
 
-void EditCloud::outline(){
-
+void EditCloud::outline()
+{
     pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
     sor.setInputCloud(cloud);
     sor.setMeanK(50);
@@ -106,8 +124,8 @@ void EditCloud::outline(){
     //writer.write<pcl::PointXYZ> ("/home/kawa/program/calc3D/data/outline.ply", *newCloud, false);
 }
 
-void EditCloud::filter() {
-
+void EditCloud::filter()
+{
     cloud.reset(new pcl::PointCloud<pcl::PointXYZ>);
 
     //over_cloud

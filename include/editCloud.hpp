@@ -19,6 +19,19 @@ public:
 
 private:
 
+    float voxel_size;
+
+    float x_min; 
+    float x_max; 
+    float y_min; 
+    float y_max; 
+    float z_min; 
+    float z_max; 
+    float under_z_min; 
+    float under_z_max; 
+
+    void set_param();
+    void get_param();
     void smooth();
     void rangeFilter_over();
     void rangeFilter_under();

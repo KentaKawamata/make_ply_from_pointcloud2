@@ -1,0 +1,45 @@
+<launch>
+
+    <arg name="lis_header_id" default="track_odom_frame" />
+    <arg name="lis_child_id" default="track_pose_frame" />
+    <arg name="pub_header_id" default="track_pose_frame" />
+    <arg name="pub_child_id" default="cam_1_link" />
+
+    <arg name="voxel_size" default="0.0128" />
+
+    <arg name="range_x_min" default="-2.0" />
+    <arg name="range_x_max" default="2.0" />
+    <arg name="range_y_min" default="0.0" />
+    <arg name="range_y_max" default="2.0" />
+    <arg name="range_z_min" default="3.7" />
+    <arg name="range_z_max" default="5.5" />
+    <arg name="range_under_z_min" default="1.5" />
+    <arg name="range_under_z_max" default="4.0" />
+
+    <arg name="under_cam_x" default="-0.045" />
+    <arg name="under_cam_z" default="-0.045" />
+
+
+    <param name="/ply_from_pc2/lis_header_id" value="$(arg lis_header_id)" /> 
+    <param name="/ply_from_pc2/lis_child_id" value="$(arg lis_child_id)" /> 
+    <param name="/ply_from_pc2/pub_header_id" value="$(arg pub_header_id)" /> 
+    <param name="/ply_from_pc2/pub_child_id" value="$(arg pub_child_id)" /> 
+
+    <param name="/ply_from_pc2/voxel_size" value="$(arg voxel_size)" /> 
+
+    <param name="/ply_from_pc2/range_x_min" value="$(arg range_x_min)" /> 
+    <param name="/ply_from_pc2/range_x_max" value="$(arg range_x_max)" /> 
+    <param name="/ply_from_pc2/range_y_min" value="$(arg range_y_min)" /> 
+    <param name="/ply_from_pc2/range_y_max" value="$(arg range_y_max)" /> 
+    <param name="/ply_from_pc2/range_z_min" value="$(arg range_z_min)" /> 
+    <param name="/ply_from_pc2/range_z_max" value="$(arg range_z_max)" /> 
+    <param name="/ply_from_pc2/range_under_z_min" value="$(arg range_under_z_min)" /> 
+    <param name="/ply_from_pc2/range_under_z_max" value="$(arg range_under_z_max)" /> 
+    
+    <param name="/ply_from_pc2/under_cam_x" value="$(arg under_cam_x)" /> 
+    <param name="/ply_from_pc2/under_cam_z" value="$(arg under_cam_z)" /> 
+
+
+    <node pkg="ply_from_pc2" name="ply_from_pc2" type="ply_from_pc2" output="screen" />
+
+</launch>
