@@ -1,20 +1,14 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(make_ply_data)
+project(ply_from_pc2)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
 
-function(Flag flag init_flag flag_message)
-    if(NOT DEFINED ${flag})
-        set(${flag} ${init_flag} CACHE BOOL "${flag_message} : true or false" FORCE)
-    endif()
-endfunction(Flag)
-
-Flag(USE_Boost true "Find and link Boost library")
-Flag(USE_CV true "Find and link OpenCV library")
-Flag(USE_RS2 true "Find and link librealsense2 library")
-Flag(USE_PCL true "Find and link Point Cloud Library")
-Flag(USE_EIGEN true "Find and link Eigen Library")
+set(USE_Boost 1 "Find and link Boost library")
+set(USE_CV 1 "Find and link OpenCV library")
+set(USE_RS2 1 "Find and link librealsense2 library")
+set(USE_PCL 1 "Find and link Point Cloud Library")
+set(USE_EIGEN 1 "Find and link Eigen Library")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -217,8 +211,6 @@ add_executable(${PROJECT_NAME}
   include/editCloud.hpp
   src/getRotationVector.cpp
   include/getRotationVector.hpp
-  src/registration_pc.cpp
-  include/registration_pc.hpp
 )
 
 ## Rename C++ executable without prefix

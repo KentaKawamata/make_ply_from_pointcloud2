@@ -25,30 +25,28 @@ ROStoPCL::ROStoPCL(ros::NodeHandle &nh) :
     get_params();
     rotevec = new GetRotationVector();
     edit = new EditCloud();
-    registrate = new registration::registration_pc();
 }
 
 ROStoPCL::~ROStoPCL() {
     delete rotevec; 
     delete edit;
-    delete registrate;
 }
 
 void ROStoPCL::set_params() {
 
-    ros::param::set("/pc_tf/lis_header_id", "track_odom_frame");
-    ros::param::set("/pc_tf/lis_child_id", "track_pose_frame");
+    ros::param::set("/ply_from_pc2/lis_header_id", "track_odom_frame");
+    ros::param::set("/ply_from_pc2/lis_child_id", "track_pose_frame");
 
-    ros::param::get("/pc_tf/lis_header_id", lis_header_id);
-    ros::param::get("/pc_tf/lis_child_id", lis_child_id);
+    ros::param::get("/ply_from_pc2/lis_header_id", lis_header_id);
+    ros::param::get("/ply_from_pc2/lis_child_id", lis_child_id);
 }
 
 void ROStoPCL::check_params() {
     
-    if(!ros::param::has("/pc_tf/lis_header_id")){
+    if(!ros::param::has("/ply_from_pc2/lis_header_id")){
         throw std::runtime_error("COULD NOT FIND PARAMS OF FRAME");
     
-    } else if(!ros::param::has("/pc_tf/lis_child_id")){
+    } else if(!ros::param::has("/ply_from_pc2/lis_child_id")){
         throw std::runtime_error("COULD NOT FIND PARAMS OF FRAME");
     }    
 }
@@ -58,8 +56,8 @@ void ROStoPCL::get_params() {
     try {
 
         check_params();
-        ros::param::get("/pc_tf/lis_header_id", lis_header_id);
-        ros::param::get("/pc_tf/lis_child_id", lis_child_id);
+        ros::param::get("/ply_from_pc2/lis_header_id", lis_header_id);
+        ros::param::get("/ply_from_pc2/lis_child_id", lis_child_id);
 
     } catch(std::exception& ex) {
         ROS_ERROR_STREAM("=== " << ex.what() << " ===");
@@ -114,7 +112,7 @@ void ROStoPCL::transformPointCloud() {
     savePointcloud();
 }
 
-void ROStoPCL::transformPointCloud_for_ICP() {
+/*void ROStoPCL::transformPointCloud_for_ICP() {
 
     registrate->count = count;        
 
@@ -122,7 +120,7 @@ void ROStoPCL::transformPointCloud_for_ICP() {
      *  If T265's data is not trusty, 
      *  over_cloud_pcl and under_cloud_pcl is rotated by 
      *  T265's data before untrusty.
-     * **/
+     * **
     pcl::copyPointCloud(*over_cloud_pcl, *(edit->over_cloud));
     pcl::copyPointCloud(*under_cloud_pcl, *(edit->under_cloud));
     edit->filter();
@@ -141,7 +139,7 @@ void ROStoPCL::transformPointCloud_for_ICP() {
     pcl::copyPointCloud(*(registrate->cloud), *over_cloud_pcl);
     
     savePointcloud();
-}
+}*/
 
 void ROStoPCL::quaternion_to_euler(geometry_msgs::TransformStamped &ts) {
 
@@ -280,7 +278,7 @@ void ROStoPCL::run() {
 
 int main(int argc, char *argv[]) {
 
-    ros::init(argc, argv, "get_pointcloud");
+    ros::init(argc, argv, "ply_from_pc2");
     ros::NodeHandle nh;
 
     ROStoPCL *get_pcl;
