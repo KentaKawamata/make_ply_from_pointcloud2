@@ -10,10 +10,10 @@
     <arg name="pub_header_id" default="track_pose_frame" />
     <arg name="pub_child_id" default="cam_1_link" />
 
-    <arg name="voxel_size" default="0.0128" />
+    <arg name="voxel_size" default="0.00005" />
 
-    <arg name="meanK" default="3" />
-    <arg name="mulThresh" default="45.0" />
+    <arg name="meanK" default="5" />
+    <arg name="mulThresh" default="0.0001" />
 
     <arg name="first_position_x" default="0.0" />
     <arg name="first_position_y" default="-3.15" />
