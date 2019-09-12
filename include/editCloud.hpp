@@ -21,6 +21,9 @@ private:
 
     float voxel_size;
 
+    int meanK;
+    float mulThresh;
+
     float x_min; 
     float x_max; 
     float y_min; 

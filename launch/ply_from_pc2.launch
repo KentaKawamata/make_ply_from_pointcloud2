@@ -1,7 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <launch>
 
     <arg name="use_odom_translation" default="false" />
-    <arg name="file_path" default="/root/datas/katori_0906/" />
+    <arg name="file_path" default="/root/datas/katori_0906/ply_data/after_TS5/" />
     <arg name="file_name" default="after_TS5_" />
 
     <arg name="lis_header_id" default="track_odom_frame" />
@@ -11,17 +12,24 @@
 
     <arg name="voxel_size" default="0.0128" />
 
+    <arg name="meanK" default="3" />
+    <arg name="mulThresh" default="45.0" />
+
+    <arg name="first_position_x" default="0.0" />
+    <arg name="first_position_y" default="-3.15" />
+    <arg name="first_position_z" default="0.0" />
+
     <arg name="range_x_min" default="-2.0" />
     <arg name="range_x_max" default="2.0" />
-    <arg name="range_y_min" default="0.0" />
-    <arg name="range_y_max" default="2.0" />
-    <arg name="range_z_min" default="3.7" />
-    <arg name="range_z_max" default="5.5" />
-    <arg name="range_under_z_min" default="1.5" />
-    <arg name="range_under_z_max" default="4.0" />
+    <arg name="range_y_min" default="1.0" />
+    <arg name="range_y_max" default="5.3" />
+    <arg name="range_z_min" default="0.0" />
+    <arg name="range_z_max" default="20.5" />
+    <arg name="range_under_z_min" default="0.5" />
+    <arg name="range_under_z_max" default="20.5" />
 
-    <arg name="under_cam_x" default="-0.045" />
-    <arg name="under_cam_z" default="-0.045" />
+    <arg name="under_cam_x" default="0.045" />
+    <arg name="under_cam_z" default="-0.105" />
 
 
     <param name="/ply_from_pc2/use_translation" value="$(arg use_odom_translation)" /> 
@@ -34,6 +42,13 @@
     <param name="/ply_from_pc2/pub_child_id" value="$(arg pub_child_id)" /> 
 
     <param name="/ply_from_pc2/voxel_size" value="$(arg voxel_size)" /> 
+
+    <param name="/ply_from_pc2/meanK" value="$(arg meanK)" /> 
+    <param name="/ply_from_pc2/mulThresh" value="$(arg mulThresh)" /> 
+
+    <param name="/ply_from_pc2/first_position_x" value="$(arg first_position_x)" /> 
+    <param name="/ply_from_pc2/first_position_y" value="$(arg first_position_y)" /> 
+    <param name="/ply_from_pc2/first_position_z" value="$(arg first_position_z)" /> 
 
     <param name="/ply_from_pc2/range_x_min" value="$(arg range_x_min)" /> 
     <param name="/ply_from_pc2/range_x_max" value="$(arg range_x_max)" /> 

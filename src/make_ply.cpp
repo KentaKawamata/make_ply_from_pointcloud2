@@ -37,7 +37,13 @@ void ROStoPCL::get_params()
 {
     ros::param::get("/ply_from_pc2/lis_header_id", lis_header_id);
     ros::param::get("/ply_from_pc2/lis_child_id", lis_child_id);
+    
+    ros::param::get("/ply_from_pc2/first_position_x", first_position_x);
+    ros::param::get("/ply_from_pc2/first_position_y", first_position_y);
+    ros::param::get("/ply_from_pc2/first_position_z", first_position_z);
+
     ros::param::get("/ply_from_pc2/use_translation", use_translate);
+
     ros::param::get("/ply_from_pc2/file_path", file_path);
     ros::param::get("/ply_from_pc2/file_name", file_name);
 }

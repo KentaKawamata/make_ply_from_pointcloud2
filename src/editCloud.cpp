@@ -26,6 +26,9 @@ void EditCloud::get_param()
 {
     ros::param::get("/ply_from_pc2/voxel_size", voxel_size);
 
+    ros::param::get("/ply_from_pc2/meanK", meanK);
+    ros::param::get("/ply_from_pc2/mulThresh", mulThresh);
+
     ros::param::get("/ply_from_pc2/range_under_z_min", under_z_min);
     ros::param::get("/ply_from_pc2/range_under_z_max", under_z_max);
 
@@ -110,8 +113,8 @@ void EditCloud::outline()
 {
     pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
     sor.setInputCloud(cloud);
-    sor.setMeanK(50);
-    sor.setStddevMulThresh(1.0);
+    sor.setMeanK(meanK);
+    sor.setStddevMulThresh(mulThresh);
     sor.filter(*cloud);
 
     /*     
@@ -140,8 +143,8 @@ void EditCloud::filter()
     //over_cloud
     pcl::copyPointCloud(*over_cloud, *cloud);
     rangeFilter_over();
-    outline();
-    voxel_grid();
+    //outline();
+    //voxel_grid();
     pcl::copyPointCloud(*cloud, *over_cloud);
 
     cloud.reset(new pcl::PointCloud<pcl::PointXYZ>);
@@ -149,7 +152,7 @@ void EditCloud::filter()
     //under_cloud
     pcl::copyPointCloud(*under_cloud, *cloud);
     rangeFilter_under();
-    outline();
-    voxel_grid();
+    //outline();
+    //voxel_grid();
     pcl::copyPointCloud(*cloud, *under_cloud);
 }

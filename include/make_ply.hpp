@@ -22,6 +22,10 @@ private:
     double RrosX;
     double RrosY;
     double RrosZ;
+    double first_position_x;
+    double first_position_y;
+    double first_position_z;
+
     bool use_translate;
 
     int count;

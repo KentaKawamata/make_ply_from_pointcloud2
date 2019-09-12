@@ -44,7 +44,7 @@ void GetRotationVector::setOverRotate4()
     R(2,2) = R3d(2,2);
 
     R(0,3) = tpclX; 
-    R(1,3) = tpclY - under_cam_z; 
+    R(1,3) = tpclY + under_cam_z; 
     R(2,3) = tpclZ + under_cam_x;
     R(3,3) = 1.0;
 }
