@@ -23,13 +23,13 @@
     <arg name="range_x_max" default="2.0" />
     <arg name="range_y_min" default="1.0" />
     <arg name="range_y_max" default="5.3" />
-    <arg name="range_z_min" default="0.0" />
-    <arg name="range_z_max" default="20.5" />
-    <arg name="range_under_z_min" default="0.5" />
-    <arg name="range_under_z_max" default="20.5" />
+    <arg name="range_z_min" default="3.0" />
+    <arg name="range_z_max" default="5.7" />
+    <arg name="range_under_z_min" default="1.5" />
+    <arg name="range_under_z_max" default="5.5" />
 
-    <arg name="under_cam_x" default="0.045" />
-    <arg name="under_cam_z" default="-0.105" />
+    <arg name="under_cam_x" default="0.040" />
+    <arg name="under_cam_z" default="-0.163" />
 
 
     <param name="/ply_from_pc2/use_translation" value="$(arg use_odom_translation)" /> 
