@@ -1,7 +1,8 @@
 <launch>
 
     <arg name="use_odom_translation" default="false" />
-    <arg name="filename" default="/root/datas/katori_0906" />
+    <arg name="file_path" default="/root/datas/katori_0906/" />
+    <arg name="file_name" default="after_TS5_" />
 
     <arg name="lis_header_id" default="track_odom_frame" />
     <arg name="lis_child_id" default="track_pose_frame" />
@@ -24,7 +25,8 @@
 
 
     <param name="/ply_from_pc2/use_translation" value="$(arg use_odom_translation)" /> 
-    <param name="/ply_from_pc2/filename" value="$(arg filename)" /> 
+    <param name="/ply_from_pc2/file_path" value="$(arg file_path)" /> 
+    <param name="/ply_from_pc2/file_name" value="$(arg file_name)" /> 
 
     <param name="/ply_from_pc2/lis_header_id" value="$(arg lis_header_id)" /> 
     <param name="/ply_from_pc2/lis_child_id" value="$(arg lis_child_id)" /> 

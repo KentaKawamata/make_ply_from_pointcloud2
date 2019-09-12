@@ -31,7 +31,8 @@ private:
     uint32_t confidence;
 
     char character;
-    std::string filename;
+    std::string file_path;
+    std::string file_name;
 
     std::string lis_header_id;
     std::string lis_child_id;

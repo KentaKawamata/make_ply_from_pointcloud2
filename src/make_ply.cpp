@@ -27,84 +27,59 @@ ROStoPCL::ROStoPCL(ros::NodeHandle &nh) :
     edit = new EditCloud();
 }
 
-ROStoPCL::~ROStoPCL() {
+ROStoPCL::~ROStoPCL()
+{
     delete rotevec; 
     delete edit;
 }
 
-void ROStoPCL::set_params()
+void ROStoPCL::get_params()
 {
-    ros::param::set("/ply_from_pc2/lis_header_id", "track_odom_frame");
-    ros::param::set("/ply_from_pc2/lis_child_id", "track_pose_frame");
-    ros::param::set("/ply_from_pc2/use_translation", "false");
-    ros::param::set("/ply_from_pc2/filename", "/root/datas/katori_0906");
-
     ros::param::get("/ply_from_pc2/lis_header_id", lis_header_id);
     ros::param::get("/ply_from_pc2/lis_child_id", lis_child_id);
     ros::param::get("/ply_from_pc2/use_translation", use_translate);
-    ros::param::get("/ply_from_pc2/filename", filename);
+    ros::param::get("/ply_from_pc2/file_path", file_path);
+    ros::param::get("/ply_from_pc2/file_name", file_name);
 }
 
-void ROStoPCL::check_params()
+void ROStoPCL::getConfidence_callback(const std_msgs::UInt32& msg)
 {
-    if(!ros::param::has("/ply_from_pc2/lis_header_id"))
-    {
-        throw std::runtime_error("COULD NOT FIND PARAMS OF FRAME");
-    }
-    else if(!ros::param::has("/ply_from_pc2/lis_child_id"))
-    {
-        throw std::runtime_error("COULD NOT FIND PARAMS OF FRAME");
-    }    
-}
-
-void ROStoPCL::get_params() {
-
-    try {
-
-        check_params();
-        ros::param::get("/ply_from_pc2/lis_header_id", lis_header_id);
-        ros::param::get("/ply_from_pc2/lis_child_id", lis_child_id);
-        ros::param::get("/ply_from_pc2/use_translation", use_translate);
-        ros::param::get("/ply_from_pc2/filename", filename);
-
-    } catch(std::exception& ex) {
-        ROS_ERROR_STREAM("=== " << ex.what() << " ===");
-        set_params();
-    } 
-}
-
-void ROStoPCL::getConfidence_callback(const std_msgs::UInt32& msg) {
-
     confidence = msg.data;
     ROS_INFO(" GET CONFIDENCE");
 }
 
-void ROStoPCL::getOverPointCloud_callback(const sensor_msgs::PointCloud2ConstPtr &cloud_msgs) {
-
+void ROStoPCL::getOverPointCloud_callback(const sensor_msgs::PointCloud2ConstPtr &cloud_msgs)
+{
     pcl::fromROSMsg(*cloud_msgs, *over_cloud_pcl);
     ROS_INFO("GET POINTCLOUD   === OVER ===");
 }
 
-void ROStoPCL::getUnderPointCloud_callback(const sensor_msgs::PointCloud2ConstPtr &cloud_msgs) {
-
+void ROStoPCL::getUnderPointCloud_callback(const sensor_msgs::PointCloud2ConstPtr &cloud_msgs)
+{
     pcl::fromROSMsg(*cloud_msgs, *under_cloud_pcl);
     ROS_INFO("GET POINTCLOUD   === UNDER ===");
 }
 
-void ROStoPCL::addPointCloud() {
-
+void ROStoPCL::addPointCloud()
+{
     *over_cloud_pcl += *under_cloud_pcl;
 }
 
-void ROStoPCL::savePointcloud() {
+void ROStoPCL::savePointcloud()
+{
+    std::string savename = file_path 
+                         + file_name 
+                         + std::to_string(count) 
+                         + ".ply"; 
 
-    std::string num = std::to_string(count);
-    std::string savename = filename + num + ".ply"; 
     ROS_INFO_STREAM("SAVE FILE NAME : " + savename);
     pcl::io::savePLYFileASCII(savename, *over_cloud_pcl);
 }
 
-void ROStoPCL::transformPointCloud() {
+void ROStoPCL::transformPointCloud()
+{
+    pcl::transformPointCloud(*over_cloud_pcl, *over_cloud_pcl, R); 
+    pcl::transformPointCloud(*under_cloud_pcl, *under_cloud_pcl, under_R); 
 
     pcl::copyPointCloud(*over_cloud_pcl, *(edit->over_cloud));
     pcl::copyPointCloud(*under_cloud_pcl, *(edit->under_cloud));
@@ -112,9 +87,6 @@ void ROStoPCL::transformPointCloud() {
 
     pcl::copyPointCloud(*(edit->over_cloud), *over_cloud_pcl);
     pcl::copyPointCloud(*(edit->under_cloud), *under_cloud_pcl);
-
-    pcl::transformPointCloud(*over_cloud_pcl, *over_cloud_pcl, R); 
-    pcl::transformPointCloud(*under_cloud_pcl, *under_cloud_pcl, under_R); 
 
     addPointCloud();
     savePointcloud();
@@ -149,13 +121,13 @@ void ROStoPCL::transformPointCloud() {
     savePointcloud();
 }*/
 
-void ROStoPCL::quaternion_to_euler(geometry_msgs::TransformStamped &ts) {
-
+void ROStoPCL::quaternion_to_euler(geometry_msgs::TransformStamped &ts)
+{
     translation.setValue(ts.transform.translation.x,
                          ts.transform.translation.y,
                          ts.transform.translation.z);
 
-    /*************************************************************************
+    /***********************************************************
      * < Must not toutch tpclZ, tpclY and tpclX !!!!!      >
      * < tpclZ, tpclY and tpclX are completely correct !!! >
      *         \  ^__^
@@ -163,7 +135,7 @@ void ROStoPCL::quaternion_to_euler(geometry_msgs::TransformStamped &ts) {
      *           (__)\    )\/\
      *              ||----w |
      *              ||    ||
-     ***********************************************************************/
+     ***********************************************************/
     //////////////////////////////////
     if(use_translate)
     {
@@ -187,7 +159,7 @@ void ROStoPCL::quaternion_to_euler(geometry_msgs::TransformStamped &ts) {
     tf2::Matrix3x3 m(rotation);
     m.getRPY(RrosX, RrosY, RrosZ);
 
-    /*************************************************************************
+    /*******************************************************************
      * Must not toutch roll, pitch and yaw !!!!!
      * Roll, pitch and yaw are completely correct !!!
      * 
@@ -208,21 +180,17 @@ void ROStoPCL::quaternion_to_euler(geometry_msgs::TransformStamped &ts) {
      *　/ri￣|^}　　　{ T￣|^}／Ｘ:;; {T==ｲｺ
      *　|二=--{､　　|三三三}＼/三r-----{
      *　｀ーー‐'　　　￣￣￣　　｀~└─―┘
-     ***********************************************************************/
+     *****************************************************************/
     ////////////////////////////////////////////////////////////
     rotevec->roll  = RrosX;
     rotevec->pitch = -RrosY;
     rotevec->yaw   = -RrosZ;
     rotevec->under_pitch = -RrosY - (40.0*M_PI/180);
     ////////////////////////////////////////////////////////////
-
-    ROS_INFO("ROLL : %f", (float)-RrosX);
-    ROS_INFO("PITCH : %f", (float)RrosY);
-    ROS_INFO("YAW : %f", (float)RrosZ);
 }
 
-void ROStoPCL::quaternion_to_vector(geometry_msgs::TransformStamped &ts) {
-    
+void ROStoPCL::quaternion_to_vector(geometry_msgs::TransformStamped &ts)
+{
     quaternion_to_euler(ts);
     rotevec->transformPointCloud();
 
@@ -230,38 +198,46 @@ void ROStoPCL::quaternion_to_vector(geometry_msgs::TransformStamped &ts) {
     under_R = rotevec->under_R;
 }
 
-void ROStoPCL::getCharacter() {
-
+void ROStoPCL::getCharacter()
+{
     ROS_INFO("===== PLEASE INPUT 's' or 'q' KEY =====");
 
-    while(true){
-
+    while(true)
+    {
         std::cin >> character;
         
-        if(character == 's') {
+        if(character == 's')
+        {
             break;
-        } else if(character == 'q') {
+        }
+        else if(character == 'q')
+        {
             ROS_INFO("===== THIS NODE CLOSE =====");
             exit(0);
-        }else{
+        }
+        else
+        {
             ROS_ERROR("PLEASE INPUT KEY 's' or 'q' ONLY");
         } 
     }
 }
 
-void ROStoPCL::run() {
-
+void ROStoPCL::run()
+{
     tf2_ros::Buffer tfBuffer;
     tf2_ros::TransformListener tfListener(tfBuffer);
     ros::Rate rate(1.0);
         
-    while(ros::ok()){
-
+    while(ros::ok())
+    {
         geometry_msgs::TransformStamped ts;
-        try{
+        try
+        {
             ts = tfBuffer.lookupTransform(lis_header_id, lis_child_id, ros::Time(0));
 
-        } catch(tf2::TransformException &ex) {
+        }
+        catch(tf2::TransformException &ex)
+        {
             ROS_ERROR("%s", ex.what());
             getCharacter();
             ros::Duration(1.0).sleep();
@@ -272,17 +248,15 @@ void ROStoPCL::run() {
         over_pc_num = over_cloud_pcl->size();
         under_pc_num = under_cloud_pcl->size();
 
-        if((over_pc_num>0 && under_pc_num>0) && confidence>=2) {
-                
+        if((over_pc_num>0 && under_pc_num>0) && confidence>=2)
+        {
             quaternion_to_vector(ts);
             transformPointCloud();
             count++;
 
-        } else if(confidence < 2) {
-            ROS_WARN_STREAM("T265 data error, confidence : " + std::to_string(confidence) );
-            //transformPointCloud_for_ICP();
-
-        } else {
+        }
+        else
+        {
             ROS_INFO("NO POINTCLOUD DATA");
         }
 
@@ -293,8 +267,8 @@ void ROStoPCL::run() {
     }    
 }
 
-int main(int argc, char *argv[]) {
-
+int main(int argc, char *argv[])
+{
     ros::init(argc, argv, "ply_from_pc2");
     ros::NodeHandle nh;
 
