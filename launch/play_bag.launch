@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+    <arg name="option_name"
+        default="--loop  
+                 -r 0.5 --clock" />
+
+    <arg name="file_name"
+        default="/root/datas/trinity_data/katori_after0906_TS5.bag" />
+
+    <node name="play_bag_data" pkg="rosbag" type="play" 
+        args="$(arg option_name) $(arg file_name)"
+        output="screen" />
+
+</launch>
