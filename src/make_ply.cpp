@@ -43,6 +43,7 @@ void ROStoPCL::get_params()
     ros::param::get("/ply_from_pc2/first_position_z", first_position_z);
 
     ros::param::get("/ply_from_pc2/use_translation", use_translate);
+    ros::param::get("/ply_from_pc2/use_rotation", use_rotation);
 
     ros::param::get("/ply_from_pc2/file_path", file_path);
     ros::param::get("/ply_from_pc2/regi_path", regi_path);
@@ -180,10 +181,20 @@ void ROStoPCL::quaternion_to_euler(geometry_msgs::TransformStamped &ts)
      *　｀ーー‐'　　　￣￣￣　　｀~└─―┘
      *****************************************************************/
     ////////////////////////////////////////////////////////////
-    rotevec->roll  = RrosX;
-    rotevec->pitch = -RrosY;
-    rotevec->yaw   = -RrosZ;
-    rotevec->under_pitch = -RrosY - (40.0*M_PI/180);
+    if(use_rotation)
+    {
+        rotevec->roll  = RrosX;
+        rotevec->pitch = -RrosY;
+        rotevec->yaw   = -RrosZ;
+        rotevec->under_pitch = -RrosY - (40.0*M_PI/180);
+    }
+    else
+    {
+        rotevec->roll  = 0.0;
+        rotevec->pitch = 0.0;
+        rotevec->yaw   = 0.0;
+        rotevec->under_pitch = -RrosY - (40.0*M_PI/180);
+    }
     ////////////////////////////////////////////////////////////
 }
 

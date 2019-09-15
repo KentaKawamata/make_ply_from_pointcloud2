@@ -2,7 +2,11 @@
 <launch>
 
     <arg name="use_odom_translation" default="false" />
+    <arg name="use_odom_rotation" default="true" />
+    <arg name="make_data_for_registration" default="true" />
+
     <arg name="file_path" default="/root/datas/katori_0906/ply_data/after_TS5/" />
+    <arg name="regi_path" default="/root/datas/katori_0906/ply_data/for_regi/after_TS5/" />
     <arg name="file_name" default="after_TS5_" />
 
     <arg name="lis_header_id" default="track_odom_frame" />
@@ -10,7 +14,7 @@
     <arg name="pub_header_id" default="track_pose_frame" />
     <arg name="pub_child_id" default="cam_1_link" />
 
-    <arg name="voxel_size" default="0.00005" />
+    <arg name="voxel_size" default="0.005" />
 
     <arg name="meanK" default="5" />
     <arg name="mulThresh" default="0.0001" />
@@ -22,7 +26,7 @@
     <arg name="range_x_min" default="-2.0" />
     <arg name="range_x_max" default="2.0" />
     <arg name="range_y_min" default="1.0" />
-    <arg name="range_y_max" default="5.3" />
+    <arg name="range_y_max" default="3.5" />
     <arg name="range_z_min" default="3.0" />
     <arg name="range_z_max" default="5.7" />
     <arg name="range_under_z_min" default="1.5" />
@@ -33,7 +37,11 @@
 
 
     <param name="/ply_from_pc2/use_translation" value="$(arg use_odom_translation)" /> 
+    <param name="/ply_from_pc2/use_rotation" value="$(arg use_odom_rotation)" /> 
+    <param name="/ply_from_pc2/make_data_for_registration" value="$(arg make_data_for_registration)" /> 
+
     <param name="/ply_from_pc2/file_path" value="$(arg file_path)" /> 
+    <param name="/ply_from_pc2/regi_path" value="$(arg regi_path)" /> 
     <param name="/ply_from_pc2/file_name" value="$(arg file_name)" /> 
 
     <param name="/ply_from_pc2/lis_header_id" value="$(arg lis_header_id)" /> 

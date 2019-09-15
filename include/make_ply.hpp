@@ -27,6 +27,7 @@ private:
     double first_position_z;
 
     bool use_translate;
+    bool use_rotation;
 
     int count;
     int over_pc_num;
