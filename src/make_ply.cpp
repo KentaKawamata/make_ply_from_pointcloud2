@@ -114,34 +114,7 @@ void ROStoPCL::make_ply_data_for_regi()
 
     pcl::io::savePLYFileASCII(savename, *cloud);
 }
-/*void ROStoPCL::transformPointCloud_for_ICP() {
 
-    registrate->count = count;        
-
-    /**
-     *  If T265's data is not trusty, 
-     *  over_cloud_pcl and under_cloud_pcl is rotated by 
-     *  T265's data before untrusty.
-     * **
-    pcl::copyPointCloud(*over_cloud_pcl, *(edit->over_cloud));
-    pcl::copyPointCloud(*under_cloud_pcl, *(edit->under_cloud));
-    edit->filter();
-
-    pcl::copyPointCloud(*(edit->over_cloud), *over_cloud_pcl);
-    pcl::copyPointCloud(*(edit->under_cloud), *under_cloud_pcl);
-
-    pcl::transformPointCloud(*over_cloud_pcl, *over_cloud_pcl, R); 
-    pcl::transformPointCloud(*under_cloud_pcl, *under_cloud_pcl, under_R); 
-
-    addPointCloud();
-
-    pcl::copyPointCloud(*over_cloud_pcl, *(registrate->cloud));
-    registrate->registrate_for_ROS_to_PCL();
-
-    pcl::copyPointCloud(*(registrate->cloud), *over_cloud_pcl);
-    
-    savePointcloud();
-}*/
 
 void ROStoPCL::quaternion_to_euler(geometry_msgs::TransformStamped &ts)
 {
