@@ -45,6 +45,7 @@ void ROStoPCL::get_params()
     ros::param::get("/ply_from_pc2/use_translation", use_translate);
 
     ros::param::get("/ply_from_pc2/file_path", file_path);
+    ros::param::get("/ply_from_pc2/regi_path", regi_path);
     ros::param::get("/ply_from_pc2/file_name", file_name);
 }
 
@@ -66,23 +67,7 @@ void ROStoPCL::getUnderPointCloud_callback(const sensor_msgs::PointCloud2ConstPt
     ROS_INFO("GET POINTCLOUD   === UNDER ===");
 }
 
-void ROStoPCL::addPointCloud()
-{
-    *over_cloud_pcl += *under_cloud_pcl;
-}
-
-void ROStoPCL::savePointcloud()
-{
-    std::string savename = file_path 
-                         + file_name 
-                         + std::to_string(count) 
-                         + ".ply"; 
-
-    ROS_INFO_STREAM("SAVE FILE NAME : " + savename);
-    pcl::io::savePLYFileASCII(savename, *over_cloud_pcl);
-}
-
-void ROStoPCL::transformPointCloud()
+void ROStoPCL::make_ply_data()
 {
     pcl::transformPointCloud(*over_cloud_pcl, *over_cloud_pcl, R); 
     pcl::transformPointCloud(*under_cloud_pcl, *under_cloud_pcl, under_R); 
@@ -94,10 +79,41 @@ void ROStoPCL::transformPointCloud()
     pcl::copyPointCloud(*(edit->over_cloud), *over_cloud_pcl);
     pcl::copyPointCloud(*(edit->under_cloud), *under_cloud_pcl);
 
-    addPointCloud();
-    savePointcloud();
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
+    *cloud += *over_cloud_pcl;
+    *cloud += *under_cloud_pcl;
+
+    std::string savename = file_path 
+                         + file_name 
+                         + std::to_string(count) 
+                         + ".ply"; 
+
+    pcl::io::savePLYFileASCII(savename, *cloud);
 }
 
+void ROStoPCL::make_ply_data_for_regi()
+{
+    pcl::transformPointCloud(*over_cloud_pcl, *over_cloud_pcl, R); 
+    pcl::transformPointCloud(*under_cloud_pcl, *under_cloud_pcl, under_R); 
+
+    pcl::copyPointCloud(*over_cloud_pcl, *(edit->over_cloud));
+    pcl::copyPointCloud(*under_cloud_pcl, *(edit->under_cloud));
+    edit->filter();
+
+    pcl::copyPointCloud(*(edit->over_cloud), *over_cloud_pcl);
+    pcl::copyPointCloud(*(edit->under_cloud), *under_cloud_pcl);
+
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
+    *cloud += *over_cloud_pcl;
+    *cloud += *under_cloud_pcl;
+
+    std::string savename = regi_path 
+                         + file_name 
+                         + std::to_string(count) 
+                         + ".ply"; 
+
+    pcl::io::savePLYFileASCII(savename, *cloud);
+}
 /*void ROStoPCL::transformPointCloud_for_ICP() {
 
     registrate->count = count;        
@@ -163,6 +179,9 @@ void ROStoPCL::quaternion_to_euler(geometry_msgs::TransformStamped &ts)
                       ts.transform.rotation.w);
 
     tf2::Matrix3x3 m(rotation);
+
+    //rotevec->get_movement(translation, m);
+
     m.getRPY(RrosX, RrosY, RrosZ);
 
     /*******************************************************************
@@ -257,7 +276,8 @@ void ROStoPCL::run()
         if((over_pc_num>0 && under_pc_num>0) && confidence>=2)
         {
             quaternion_to_vector(ts);
-            transformPointCloud();
+            make_ply_data();
+            make_ply_data_for_regi();
             count++;
 
         }

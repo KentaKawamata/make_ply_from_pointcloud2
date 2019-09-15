@@ -36,6 +36,7 @@ private:
 
     char character;
     std::string file_path;
+    std::string regi_path;
     std::string file_name;
 
     std::string lis_header_id;
@@ -69,12 +70,9 @@ private:
     void getConfidence_callback(const std_msgs::UInt32& msg);
 
     void getCharacter();
-    void transformPointCloud_for_ICP();
 
-    void addPointCloud();
-    void savePointcloud();
-
-    void transformPointCloud();
+    void make_ply_data();
+    void make_ply_data_for_regi();
 
     void quaternion_to_euler(geometry_msgs::TransformStamped &ts); 
     void quaternion_to_vector(geometry_msgs::TransformStamped &ts);
