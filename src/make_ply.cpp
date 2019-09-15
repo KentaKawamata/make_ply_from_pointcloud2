@@ -74,7 +74,7 @@ void ROStoPCL::make_ply_data()
 
     pcl::copyPointCloud(*over_cloud_pcl, *(edit->over_cloud));
     pcl::copyPointCloud(*under_cloud_pcl, *(edit->under_cloud));
-    edit->filter();
+    edit->filter_for_regi();
 
     pcl::copyPointCloud(*(edit->over_cloud), *over_cloud_pcl);
     pcl::copyPointCloud(*(edit->under_cloud), *under_cloud_pcl);

@@ -11,6 +11,7 @@ public:
     EditCloud();
     ~EditCloud();
     void filter();
+    void filter_for_regi();
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud;
     pcl::PointCloud<pcl::PointXYZ>::Ptr over_cloud;
@@ -20,6 +21,7 @@ public:
 private:
 
     float voxel_size;
+    bool make_regi_data;
 
     int meanK;
     float mulThresh;
@@ -33,8 +35,8 @@ private:
     float under_z_min; 
     float under_z_max; 
 
-    void set_param();
     void get_param();
+    void detect_plane();
     void voxel_grid();
     void smooth();
     void rangeFilter_over();

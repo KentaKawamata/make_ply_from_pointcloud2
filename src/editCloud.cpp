@@ -5,6 +5,10 @@
 #include <pcl/surface/mls.h>
 #include <pcl/filters/voxel_grid.h>
 
+#include <pcl/sample_consensus/method_types.h>
+#include <pcl/sample_consensus/model_types.h>
+#include <pcl/segmentation/sac_segmentation.h>
+
 #include <cmath>
 #include <iostream>
 
@@ -25,6 +29,7 @@ EditCloud::~EditCloud(){
 void EditCloud::get_param()
 {
     ros::param::get("/ply_from_pc2/voxel_size", voxel_size);
+    ros::param::get("/ply_from_pc2/make_data_for_registration", make_regi_data);
 
     ros::param::get("/ply_from_pc2/meanK", meanK);
     ros::param::get("/ply_from_pc2/mulThresh", mulThresh);
@@ -83,6 +88,30 @@ void EditCloud::rangeFilter_under()
     passZ.setFilterLimits(under_z_min, under_z_max);
     passZ.setFilterLimitsNegative(false);
     passZ.filter(*cloud);
+}
+
+void EditCloud::detect_plane()
+{
+    pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
+    pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
+    pcl::SACSegmentation<pcl::PointXYZ> seg;
+    
+    seg.setOptimizeCoefficients(true);
+    seg.setModelType(pcl::SACMODEL_PLANE);
+    seg.setMethodType(pcl::SAC_RANSAC);
+    seg.setDistanceThreshold(0.09);
+    seg.setInputCloud(cloud);
+    seg.segment(*inliers, *coefficients);
+
+    if(inliers->indices.size() != 0)
+    {
+        for (size_t i=0; i<inliers->indices.size(); ++i)
+        {
+            cloud->points[inliers->indices[i]].x = -1.0;
+            cloud->points[inliers->indices[i]].y = -1.0;
+            cloud->points[inliers->indices[i]].z = -1.0;
+        }
+    }
 }
 
 void EditCloud::rangeFilter_over()
@@ -151,6 +180,28 @@ void EditCloud::filter()
 
     //under_cloud
     pcl::copyPointCloud(*under_cloud, *cloud);
+    rangeFilter_under();
+    //outline();
+    //voxel_grid();
+    pcl::copyPointCloud(*cloud, *under_cloud);
+}
+
+void EditCloud::filter_for_regi()
+{
+    cloud.reset(new pcl::PointCloud<pcl::PointXYZ>);
+
+    //over_cloud
+    pcl::copyPointCloud(*over_cloud, *cloud);
+    detect_plane();
+    rangeFilter_over();
+    //outline();
+    //voxel_grid();
+    pcl::copyPointCloud(*cloud, *over_cloud);
+    cloud.reset(new pcl::PointCloud<pcl::PointXYZ>);
+
+    //under_cloud
+    pcl::copyPointCloud(*under_cloud, *cloud);
+    detect_plane();
     rangeFilter_under();
     //outline();
     //voxel_grid();
