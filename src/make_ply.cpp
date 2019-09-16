@@ -47,6 +47,8 @@ void ROStoPCL::get_params()
 
     ros::param::get("/ply_from_pc2/file_path", file_path);
     ros::param::get("/ply_from_pc2/regi_path", regi_path);
+    ros::param::get("/ply_from_pc2/file_path", file_path);
+    ros::param::get("/ply_from_pc2/regi_path", regi_path);
     ros::param::get("/ply_from_pc2/file_name", file_name);
 }
 
@@ -68,7 +70,7 @@ void ROStoPCL::getUnderPointCloud_callback(const sensor_msgs::PointCloud2ConstPt
     ROS_INFO("GET POINTCLOUD   === UNDER ===");
 }
 
-void ROStoPCL::make_ply_data()
+void ROStoPCL::make_ply_data_for_regi(const std::string &path)
 {
     pcl::transformPointCloud(*over_cloud_pcl, *over_cloud_pcl, R); 
     pcl::transformPointCloud(*under_cloud_pcl, *under_cloud_pcl, under_R); 
@@ -84,7 +86,7 @@ void ROStoPCL::make_ply_data()
     *cloud += *over_cloud_pcl;
     *cloud += *under_cloud_pcl;
 
-    std::string savename = file_path 
+    std::string savename = path 
                          + file_name 
                          + std::to_string(count) 
                          + ".ply"; 
@@ -92,7 +94,7 @@ void ROStoPCL::make_ply_data()
     pcl::io::savePLYFileASCII(savename, *cloud);
 }
 
-void ROStoPCL::make_ply_data_for_regi()
+void ROStoPCL::make_ply_data(const std::string &path)
 {
     pcl::transformPointCloud(*over_cloud_pcl, *over_cloud_pcl, R); 
     pcl::transformPointCloud(*under_cloud_pcl, *under_cloud_pcl, under_R); 
@@ -108,7 +110,7 @@ void ROStoPCL::make_ply_data_for_regi()
     *cloud += *over_cloud_pcl;
     *cloud += *under_cloud_pcl;
 
-    std::string savename = regi_path 
+    std::string savename = path 
                          + file_name 
                          + std::to_string(count) 
                          + ".ply"; 
@@ -116,6 +118,25 @@ void ROStoPCL::make_ply_data_for_regi()
     pcl::io::savePLYFileASCII(savename, *cloud);
 }
 
+
+void ROStoPCL::make_datas(geometry_msgs::TransformStamped &ts)
+{
+    // enable T265 rotation //////////////
+    use_rotation = true;
+    quaternion_to_euler(ts);
+
+    make_ply_data(file_path);
+    make_ply_data_for_regi(regi_path);
+    //////////////////////////////////////
+
+    // disable T265 rotation ///////////////////
+    use_rotation = false;
+    quaternion_to_euler(ts);
+
+    make_ply_data(file_no_rote_path);
+    make_ply_data_for_regi(regi_no_rote_path);
+    ////////////////////////////////////////////
+}
 
 void ROStoPCL::quaternion_to_euler(geometry_msgs::TransformStamped &ts)
 {
@@ -191,7 +212,7 @@ void ROStoPCL::quaternion_to_euler(geometry_msgs::TransformStamped &ts)
     else
     {
         rotevec->roll  = 0.0;
-        rotevec->pitch = 0.0;
+        rotevec->pitch = -RrosY;
         rotevec->yaw   = 0.0;
         rotevec->under_pitch = -RrosY - (40.0*M_PI/180);
     }
@@ -259,11 +280,8 @@ void ROStoPCL::run()
 
         if((over_pc_num>0 && under_pc_num>0) && confidence>=2)
         {
-            quaternion_to_vector(ts);
-            make_ply_data();
-            make_ply_data_for_regi();
+            make_datas(ts);
             count++;
-
         }
         else
         {

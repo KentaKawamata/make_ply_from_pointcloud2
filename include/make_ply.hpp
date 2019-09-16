@@ -38,6 +38,8 @@ private:
     char character;
     std::string file_path;
     std::string regi_path;
+    std::string file_no_rote_path;
+    std::string regi_no_rote_path;
     std::string file_name;
 
     std::string lis_header_id;
@@ -72,8 +74,9 @@ private:
 
     void getCharacter();
 
-    void make_ply_data();
-    void make_ply_data_for_regi();
+    void make_ply_data(const std::string &path);
+    void make_ply_data_for_regi(const std::string &path);
+    void make_datas(geometry_msgs::TransformStamped &ts);
 
     void quaternion_to_euler(geometry_msgs::TransformStamped &ts); 
     void quaternion_to_vector(geometry_msgs::TransformStamped &ts);
