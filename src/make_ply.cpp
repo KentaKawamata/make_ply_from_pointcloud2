@@ -83,7 +83,7 @@ void ROStoPCL::make_ply_data_for_regi(const std::string &path)
 
     pcl::copyPointCloud(*cp_over_cloud, *(edit->over_cloud));
     pcl::copyPointCloud(*cp_under_cloud, *(edit->under_cloud));
-    edit->filter();
+    edit->filter_for_regi();
 
     pcl::copyPointCloud(*(edit->over_cloud), *cp_over_cloud);
     pcl::copyPointCloud(*(edit->under_cloud), *cp_under_cloud);
