@@ -47,15 +47,15 @@ void ROStoPCL::get_params()
 
     ros::param::get("/ply_from_pc2/file_path", file_path);
     ros::param::get("/ply_from_pc2/regi_path", regi_path);
-    ros::param::get("/ply_from_pc2/file_path", file_path);
-    ros::param::get("/ply_from_pc2/regi_path", regi_path);
+    ros::param::get("/ply_from_pc2/file_no_rote_path", file_no_rote_path);
+    ros::param::get("/ply_from_pc2/regi_no_rote_path", regi_no_rote_path);
     ros::param::get("/ply_from_pc2/file_name", file_name);
 }
 
 void ROStoPCL::getConfidence_callback(const std_msgs::UInt32& msg)
 {
     confidence = msg.data;
-    ROS_INFO(" GET CONFIDENCE");
+    //ROS_INFO(" GET CONFIDENCE");
 }
 
 void ROStoPCL::getOverPointCloud_callback(const sensor_msgs::PointCloud2ConstPtr &cloud_msgs)
@@ -72,69 +72,86 @@ void ROStoPCL::getUnderPointCloud_callback(const sensor_msgs::PointCloud2ConstPt
 
 void ROStoPCL::make_ply_data_for_regi(const std::string &path)
 {
-    pcl::transformPointCloud(*over_cloud_pcl, *over_cloud_pcl, R); 
-    pcl::transformPointCloud(*under_cloud_pcl, *under_cloud_pcl, under_R); 
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cp_over_cloud (new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cp_under_cloud (new pcl::PointCloud<pcl::PointXYZ>);
 
-    pcl::copyPointCloud(*over_cloud_pcl, *(edit->over_cloud));
-    pcl::copyPointCloud(*under_cloud_pcl, *(edit->under_cloud));
-    edit->filter_for_regi();
+    pcl::copyPointCloud(*over_cloud_pcl, *cp_over_cloud);
+    pcl::copyPointCloud(*under_cloud_pcl, *cp_under_cloud);
 
-    pcl::copyPointCloud(*(edit->over_cloud), *over_cloud_pcl);
-    pcl::copyPointCloud(*(edit->under_cloud), *under_cloud_pcl);
+    pcl::transformPointCloud(*cp_over_cloud, *cp_over_cloud, R); 
+    pcl::transformPointCloud(*cp_under_cloud, *cp_under_cloud, under_R); 
+
+    pcl::copyPointCloud(*cp_over_cloud, *(edit->over_cloud));
+    pcl::copyPointCloud(*cp_under_cloud, *(edit->under_cloud));
+    edit->filter();
+
+    pcl::copyPointCloud(*(edit->over_cloud), *cp_over_cloud);
+    pcl::copyPointCloud(*(edit->under_cloud), *cp_under_cloud);
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
-    *cloud += *over_cloud_pcl;
-    *cloud += *under_cloud_pcl;
+    *cloud += *cp_over_cloud;
+    *cloud += *cp_under_cloud;
 
     std::string savename = path 
                          + file_name 
                          + std::to_string(count) 
                          + ".ply"; 
 
+    //ROS_INFO("Save PointCloud for Registration");
     pcl::io::savePLYFileASCII(savename, *cloud);
 }
 
 void ROStoPCL::make_ply_data(const std::string &path)
 {
-    pcl::transformPointCloud(*over_cloud_pcl, *over_cloud_pcl, R); 
-    pcl::transformPointCloud(*under_cloud_pcl, *under_cloud_pcl, under_R); 
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cp_over_cloud (new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cp_under_cloud (new pcl::PointCloud<pcl::PointXYZ>);
 
-    pcl::copyPointCloud(*over_cloud_pcl, *(edit->over_cloud));
-    pcl::copyPointCloud(*under_cloud_pcl, *(edit->under_cloud));
+    pcl::copyPointCloud(*over_cloud_pcl, *cp_over_cloud);
+    pcl::copyPointCloud(*under_cloud_pcl, *cp_under_cloud);
+
+    pcl::transformPointCloud(*cp_over_cloud, *cp_over_cloud, R); 
+    pcl::transformPointCloud(*cp_under_cloud, *cp_under_cloud, under_R); 
+
+    pcl::copyPointCloud(*cp_over_cloud, *(edit->over_cloud));
+    pcl::copyPointCloud(*cp_under_cloud, *(edit->under_cloud));
     edit->filter();
 
-    pcl::copyPointCloud(*(edit->over_cloud), *over_cloud_pcl);
-    pcl::copyPointCloud(*(edit->under_cloud), *under_cloud_pcl);
+    pcl::copyPointCloud(*(edit->over_cloud), *cp_over_cloud);
+    pcl::copyPointCloud(*(edit->under_cloud), *cp_under_cloud);
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
-    *cloud += *over_cloud_pcl;
-    *cloud += *under_cloud_pcl;
+    *cloud += *cp_over_cloud;
+    *cloud += *cp_under_cloud;
 
     std::string savename = path 
                          + file_name 
                          + std::to_string(count) 
                          + ".ply"; 
 
+    
+    //ROS_INFO("Save PointCloud for Calcrate");
     pcl::io::savePLYFileASCII(savename, *cloud);
 }
 
 
 void ROStoPCL::make_datas(geometry_msgs::TransformStamped &ts)
 {
-    // enable T265 rotation //////////////
+    // enable T265 rotation ////////////////////
     use_rotation = true;
-    quaternion_to_euler(ts);
+    quaternion_to_vector(ts);
 
     make_ply_data(file_path);
     make_ply_data_for_regi(regi_path);
-    //////////////////////////////////////
+    ROS_INFO("Save PointCloud enable T265 data");
+    ////////////////////////////////////////////
 
     // disable T265 rotation ///////////////////
     use_rotation = false;
-    quaternion_to_euler(ts);
+    quaternion_to_vector(ts);
 
     make_ply_data(file_no_rote_path);
     make_ply_data_for_regi(regi_no_rote_path);
+    ROS_INFO("Save PointCloud disable T265 data");
     ////////////////////////////////////////////
 }
 

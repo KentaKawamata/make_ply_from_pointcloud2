@@ -5,11 +5,11 @@
     <arg name="use_odom_rotation" default="true" />
     <arg name="make_data_for_registration" default="true" />
 
-    <arg name="file_path" default="/root/datas/katori_0906/ply_data/after/enable_rotation/for_calc_volume/after_TS5/" />
-    <arg name="regi_path" default="/root/datas/katori_0906/ply_data/after/enable_rotation/for_regi/after_TS5/" />
-    <arg name="file_no_rote_path" default="/root/datas/katori_0906/ply_data/after/disable_rotation/for_calc_volume/after_TS5/" />
-    <arg name="regi_no_rote_path" default="/root/datas/katori_0906/ply_data/after/disable_rotation/for_regi/after_TS5/" />
-    <arg name="file_name" default="after5_" />
+    <arg name="file_path" default="/root/datas/katori_0906/ply_data/after/enable_rotation/for_calc_volume/TS_1_2/" />
+    <arg name="regi_path" default="/root/datas/katori_0906/ply_data/after/enable_rotation/for_regi/TS_1_2/" />
+    <arg name="file_no_rote_path" default="/root/datas/katori_0906/ply_data/after/disable_rotation/for_calc_volume/TS_1_2/" />
+    <arg name="regi_no_rote_path" default="/root/datas/katori_0906/ply_data/after/disable_rotation/for_regi/TS_1_2/" />
+    <arg name="file_name" default="after1_2_" />
 
     <arg name="lis_header_id" default="track_odom_frame" />
     <arg name="lis_child_id" default="track_pose_frame" />
