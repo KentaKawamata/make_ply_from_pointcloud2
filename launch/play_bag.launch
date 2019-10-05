@@ -6,7 +6,7 @@
                  -r 0.5 --clock" />
 
     <arg name="file_name"
-        default="/root/datas/trinity_data/katori_after0906_TS5.bag" />
+        default="/mnt/data/model_for_RT/for_RT_0.bag" />
 
     <node name="play_bag_data" pkg="rosbag" type="play" 
         args="$(arg option_name) $(arg file_name)"
