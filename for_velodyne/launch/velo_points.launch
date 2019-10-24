@@ -3,8 +3,8 @@
 
     <arg name="save_ply" default="false" />
 
-    <arg name="file_path" default="/mnt/data/model_for_RT/cluster_ply/" />
-    <arg name="file_name" default="cross_jeans" />
+    <arg name="file_path" default="/datas/test_velodyne/" />
+    <arg name="file_name" default="velo_points" />
 
     <arg name="lis_header_id" default="base_link" />
     <arg name="lis_child_id" default="velodyne" />
@@ -16,13 +16,17 @@
     <arg name="meanK" default="5" />
     <arg name="mulThresh" default="0.03" />
 
-    <arg name="range_x_min" default="-0.25" />
-    <arg name="range_x_max" default="0.25" />
-    <arg name="range_y_min" default="-0.７" />
-    <arg name="range_y_max" default="0.7" />
-    <arg name="range_z_min" default="0.0" />
-    <arg name="range_z_max" default="1.5" />
+    <arg name="range_x_min" default="0.0" />
+    <arg name="range_x_max" default="7.0" />
+    <arg name="range_y_min" default="-7.0" />
+    <arg name="range_y_max" default="7.0" />
+    <arg name="range_z_min" default="-7.0" />
+    <arg name="range_z_max" default="7.0" />
 
+    <arg name="x" default="0.0" />
+    <arg name="y" default="0.0" />
+    <arg name="z" default="-0.05" />
+    
 
     <param name="/use_velo/save_ply" value="$(arg save_ply)" /> 
 
@@ -46,6 +50,9 @@
     <param name="/use_velo/range_z_min" value="$(arg range_z_min)" /> 
     <param name="/use_velo/range_z_max" value="$(arg range_z_max)" /> 
 
+    <param name="/use_velo/x" value="$(arg x)" /> 
+    <param name="/use_velo/y" value="$(arg y)" /> 
+    <param name="/use_velo/z" value="$(arg z)" /> 
 
     <node pkg="superimpose_velo_points" 
           name="superimpose_velo_points" 

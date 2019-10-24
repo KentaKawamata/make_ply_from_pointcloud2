@@ -15,11 +15,20 @@ namespace VelodynePoints
         roll(0.0),
         yaw(0.0)
     {
+        get_param();
     }
 
     GetRotationVector::~GetRotationVector()
     {
     }
+
+    void GetRotationVector::get_param()
+    {
+        ros::param::get("/use_velo/x", x);
+        ros::param::get("/use_velo/y", y);
+        ros::param::get("/use_velo/z", z);
+    }
+
 
     void GetRotationVector::setOverRotate4()
     {
@@ -35,9 +44,9 @@ namespace VelodynePoints
         R(2,1) = R3d(2,1);
         R(2,2) = R3d(2,2);
 
-        R(0,3) = tpclX; 
-        R(1,3) = tpclY; 
-        R(2,3) = tpclZ;
+        R(0,3) = tpclX + x; 
+        R(1,3) = tpclY + y; 
+        R(2,3) = tpclZ + z;
         R(3,3) = 1.0;
     }
 

@@ -11,6 +11,9 @@ namespace VelodynePoints
     private:
 
         Eigen::Matrix3d R3d;
+        float x;
+        float y;
+        float z;
 
         void get_param();
         void eulerToRote();
