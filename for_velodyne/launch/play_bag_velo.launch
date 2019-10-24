@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+    <arg name="option_name"
+        default="--loop  
+                 -r 1.0 --clock" />
+
+    <arg name="file_name"
+        default="/mnt/data/model_for_RT/for_RT_3.bag" />
+
+    <node name="play_bag_data" pkg="rosbag" type="play" 
+        args="$(arg option_name) $(arg file_name)"
+        output="screen" />
+
+</launch>

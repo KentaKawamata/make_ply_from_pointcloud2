@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+    <arg name="save_ply" default="false" />
+
+    <arg name="file_path" default="/mnt/data/model_for_RT/cluster_ply/" />
+    <arg name="file_name" default="cross_jeans" />
+
+    <arg name="lis_header_id" default="base_link" />
+    <arg name="lis_child_id" default="velodyne" />
+
+    <arg name="voxel_size" default="0.005" />
+
+    <arg name="plane_threshold" default="0.004" />
+
+    <arg name="meanK" default="5" />
+    <arg name="mulThresh" default="0.03" />
+
+    <arg name="range_x_min" default="-0.25" />
+    <arg name="range_x_max" default="0.25" />
+    <arg name="range_y_min" default="-0.７" />
+    <arg name="range_y_max" default="0.7" />
+    <arg name="range_z_min" default="0.0" />
+    <arg name="range_z_max" default="1.5" />
+
+
+    <param name="/use_velo/save_ply" value="$(arg save_ply)" /> 
+
+    <param name="/use_velo/file_path" value="$(arg file_path)" /> 
+    <param name="/use_velo/file_name" value="$(arg file_name)" /> 
+
+    <param name="/use_velo/lis_header_id" value="$(arg lis_header_id)" /> 
+    <param name="/use_velo/lis_child_id" value="$(arg lis_child_id)" /> 
+
+    <param name="/use_velo/voxel_size" value="$(arg voxel_size)" /> 
+
+    <param name="/use_velo/plane_threshold" value="$(arg plane_threshold)" />
+
+    <param name="/use_velo/meanK" value="$(arg meanK)" /> 
+    <param name="/use_velo/mulThresh" value="$(arg mulThresh)" /> 
+
+    <param name="/use_velo/range_x_min" value="$(arg range_x_min)" /> 
+    <param name="/use_velo/range_x_max" value="$(arg range_x_max)" /> 
+    <param name="/use_velo/range_y_min" value="$(arg range_y_min)" /> 
+    <param name="/use_velo/range_y_max" value="$(arg range_y_max)" /> 
+    <param name="/use_velo/range_z_min" value="$(arg range_z_min)" /> 
+    <param name="/use_velo/range_z_max" value="$(arg range_z_max)" /> 
+
+
+    <node pkg="superimpose_velo_points" 
+          name="superimpose_velo_points" 
+          type="superimpose_velo_points" 
+          output="screen" />
+
+</launch>
