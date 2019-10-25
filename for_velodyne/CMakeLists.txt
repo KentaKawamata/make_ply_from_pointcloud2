@@ -85,8 +85,8 @@ include_directories(include
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(superimpose_velo_points
-  src/make_ply.cpp
-  include/make_ply.hpp
+  src/make_pc.cpp
+  include/make_pc.hpp
   src/editCloud.cpp
   include/editCloud.hpp
   src/getRotationVector.cpp
