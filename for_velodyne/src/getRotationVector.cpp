@@ -51,25 +51,31 @@ namespace VelodynePoints
     }
 
 
+    /**
+     * Robot coordinate
+     * X : Roll
+     * Y : Pitch
+     * Z : yaw
+     **/
     void GetRotationVector::eulerToRote()
     {
         Eigen::Matrix3d Rpi;
         Eigen::Matrix3d Rya;
         Eigen::Matrix3d Rro;
 
-        Rpi << 1, 0, 0,  
-               0, cos(pitch), -sin(pitch),  
-               0, sin(pitch), cos(pitch); 
+        Rro << 1, 0, 0,  
+               0, cos(roll), -sin(roll),  
+               0, sin(roll), cos(roll); 
 
-        Rya << cos(yaw), 0, sin(yaw), 
+        Rpi << cos(pitch), 0, sin(pitch), 
                0, 1, 0, 
-               -sin(yaw), 0, cos(yaw);
+               -sin(pitch), 0, cos(pitch);
 
-        Rro << cos(roll), -sin(roll), 0, 
-               sin(roll), cos(roll), 0, 
+        Rya << cos(yaw), -sin(yaw), 0, 
+               sin(yaw), cos(yaw), 0, 
                0, 0, 1; 
 
-        R3d = Rya * Rro * Rpi;
+        R3d = Rro * Rpi * Rya;
     }
 
     void GetRotationVector::transformPointCloud()

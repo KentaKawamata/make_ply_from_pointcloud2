@@ -61,6 +61,7 @@ namespace VelodynePoints
                                  + ".ply"; 
     
             pcl::io::savePLYFileASCII(savename, *cloud);
+            ROS_INFO_STREAM("Save PointCloud : " + savename);
         }
     }
 
